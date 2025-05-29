@@ -1,0 +1,39 @@
+public List<Post> listarTImpares() {
+    String sql = "SELECT * FROM POST";
+    List<Post> posts = new ArrayList<>();
+
+    try {
+        Connection c = Conexion.getConexion();
+        PreparedStatement pst = c.prepareStatement(sql);
+        ResultSet rs = pst.executeQuery();
+
+        while (rs.next()) {
+            int id = rs.getInt("idpost");
+
+            if (id % 2 != 0) { // Solo si es impar
+                Post post = new Post();
+                post.setIdpost(id);
+                post.setTitulo(rs.getString("titulo"));
+                post.setDescripcion(rs.getString("descripcion"));
+                post.setIdusuario(rs.getInt("idusuario"));
+                posts.add(post);
+            } else {
+                System.out.println("ID par encontrado: " + id + " - No se agregó a la lista.");
+            }
+        }
+
+        if (posts.size() > 0) {
+            System.out.println("Lista de posts con ID impar:");
+            for (Post p : posts) {
+                System.out.println("ID: " + p.getIdpost() + ", Título: " + p.getTitulo());
+            }
+        } else {
+            System.out.println("No se encontraron posts con ID impar.");
+        }
+
+    } catch (SQLException e) {
+        System.out.println("ERROR AL LISTAR: " + e);
+    }
+
+    return posts;
+}
